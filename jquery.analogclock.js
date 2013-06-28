@@ -1,5 +1,5 @@
 /*
- * jQuery analogclock v0.2
+ * jQuery analogclock v0.3
  * http://makealone.jp/products/jquery.analogclock/
  *
  * Copyright 2013, makealone.jp
@@ -122,24 +122,23 @@
                     $(theCanvas).width(vp_width);
                     $(theCanvas).height(vp_height);
 
-                    console.log("debug:" + vp_width + ", " + vp_height);
-                    console.log("debug:" + vp_width + ", " + vp_height);
+                    //console.log("debug:" + scope_width + ", " + scope_height);
 
                     $this.append(theCanvas);
 
                     // draw
                     function draw(hour, minute) {
-                        var cx = vp_width / 2;
-                        var cy = vp_height / 2;
-                        var max_radius = Math.floor(Math.min(vp_width, vp_height) / 2 - 1);
+                        var cx = scope_width / 2 + 0.5;
+                        var cy = scope_height / 2 + 0.5;
+                        var max_radius = Math.floor(Math.min(scope_width, scope_height) / 2 - 1);
 
                         // frame
-                        var radius = max_radius - context.lineWidth - 1;
                         context.setTransform(1, 0, 0, 1, 0, 0);
-                        context.translate(cx + 0.5, cy + 0.5);
+                        context.translate(cx, cy);
                         context.fillStyle = opts.frame_fill_color;
                         context.strokeStyle = opts.frame_color;
-                        context.lineWidth = opts.frame_width;
+                        context.lineWidth = opts.frame_width * dpr;
+                        var radius = max_radius - context.lineWidth - 1;
                         context.lineCap = "round";
                         context.lineJoin = "round";
                         context.beginPath();
@@ -151,7 +150,7 @@
 
                         // zone
                         context.setTransform(1, 0, 0, 1, 0, 0);
-                        context.translate(cx + 0.5, cy + 0.5);
+                        context.translate(cx, cy);
                         context.fillStyle = opts.zone_fill_color;
                         jQuery.each(opts.zone_ranges, function(idx, item) {
                             var begin = getMinuteHandAngle(item[0]);
@@ -168,7 +167,7 @@
 
                         function drawShape(angle, color, width, shape) {
                             context.setTransform(1, 0, 0, 1, 0, 0);
-                            context.translate(cx + 0.5, cy + 0.5);
+                            context.translate(cx, cy);
                             context.rotate(angle);
 
                             context.strokeStyle = color;
@@ -177,6 +176,7 @@
                             jQuery.each(shape, function(idx, item) {
                                 var x = item[0] * max_radius;
                                 var y = item[1] * max_radius;
+                                //console.log("debug:", x, y);
                                 if (idx == 0) {
                                     context.moveTo(x, y);
                                 } else {
@@ -189,20 +189,20 @@
                         // minute hand
                         drawShape(getMinuteHandAngle(minute),
                                   opts.minute_color,
-                                  opts.minute_width,
+                                  opts.minute_width * dpr,
                                   opts.minute_shape);
 
                         // hour hand
                         drawShape(getHourHandAngle(hour, minute),
                                   opts.hour_color,
-                                  opts.hour_width,
+                                  opts.hour_width * dpr,
                                   opts.hour_shape);
 
                         // dot
                         jQuery.each(opts.dot_minutes, function(idx, minute) {
                             drawShape(getMinuteHandAngle(minute),
                                       opts.dot_color,
-                                      opts.dot_width,
+                                      opts.dot_width * dpr,
                                       opts.dot_shape);
                         });
                     }
