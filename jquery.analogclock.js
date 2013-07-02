@@ -1,5 +1,5 @@
 /*
- * jQuery analogclock v0.3
+ * jQuery analogclock v0.4
  * http://makealone.jp/products/jquery.analogclock/
  *
  * Copyright 2013, makealone.jp
@@ -14,6 +14,8 @@
         // options
         //
         // size -- [width, height]
+        // background_color -- background color
+        //
         // frame_fill_color -- clock backbord color
         // frame_color -- clock frame color
         // frame_width -- clock frame width
@@ -39,6 +41,8 @@
 
         // settings
         var defaults = {size: [100, 100],
+                        background_color: "rgba(0, 0, 0, 0)",
+
                         frame_fill_color: "#ffffff",
                         frame_color: "#808080",
                         frame_width: 4,
@@ -130,7 +134,21 @@
                     function draw(hour, minute) {
                         var cx = scope_width / 2 + 0.5;
                         var cy = scope_height / 2 + 0.5;
-                        var max_radius = Math.floor(Math.min(scope_width, scope_height) / 2 - 1);
+                        var max_radius = Math.min(cx, cy) - 1;
+
+                        // background color
+                        context.setTransform(1, 0, 0, 1, 0, 0);
+                        context.fillStyle = opts.background_color;
+                        context.fillRect(0, 0, scope_width, scope_height);
+                        context.beginPath();
+                        context.lineWidth = 1;
+                        context.arc(cx, cy, max_radius, 0, Math.PI * 2, false);
+                        context.clip();
+                        context.clearRect(0, 0, scope_width, scope_height);
+                        context.beginPath();
+                        context.rect(0, 0, scope_width, scope_height);
+                        context.clip();
+
 
                         // frame
                         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -138,7 +156,7 @@
                         context.fillStyle = opts.frame_fill_color;
                         context.strokeStyle = opts.frame_color;
                         context.lineWidth = opts.frame_width * dpr;
-                        var radius = max_radius - context.lineWidth - 1;
+                        var radius = max_radius - context.lineWidth / 2;
                         context.lineCap = "round";
                         context.lineJoin = "round";
                         context.beginPath();

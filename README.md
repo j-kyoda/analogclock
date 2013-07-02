@@ -1,5 +1,5 @@
 # analogclock
-_Current version: 0.3_
+_Current version: 0.4_
 
 Analogclock is a jQuery plugin that allow you to create analog clock.
 
